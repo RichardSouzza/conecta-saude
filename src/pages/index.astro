@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+
+const areas = [
+  { nome: 'Enfermagem', foco: 'prevenção e cuidados básicos com a saúde.' },
+  { nome: 'Nutrição', foco: 'alimentação e hábitos que influenciam a saúde.' },
+  { nome: 'Fisioterapia', foco: 'movimento, postura e sedentarismo.' },
+  { nome: 'Odontologia', foco: 'saúde bucal como parte da saúde integral.' },
+  { nome: 'Psicologia', foco: 'saúde mental, estresse e qualidade de vida.' },
+  { nome: 'Biomedicina', foco: 'prevenção e importância dos exames e indicadores de saúde.' },
+  { nome: 'Computação', foco: 'como a tecnologia pode facilitar o acesso à informação e ao cuidado.' },
+];
+---
+<Base titulo="Conecta Saúde">
+  <section class="abertura" aria-labelledby="titulo-pagina">
+    <h1 id="titulo-pagina">Conecta Saúde</h1>
+    <p class="chamada">Tecnologia e saúde a favor da qualidade de vida.</p>
+  </section>
+
+  <section aria-labelledby="titulo-areas">
+    <h2 id="titulo-areas">Sete áreas, uma conversa</h2>
+    <p class="texto">
+      A palestra “Saúde integral: pequenos hábitos, grandes impactos na qualidade de vida” reúne
+      sete áreas que se complementam. Cada uma olha para a saúde de um ângulo diferente.
+    </p>
+    <dl class="areas">
+      {areas.map((area) => (
+        <div class="area">
+          <dt>{area.nome}</dt>
+          <dd>{area.foco}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <section aria-labelledby="titulo-preparo">
+    <h2 id="titulo-preparo">Conteúdos em preparação</h2>
+    <p class="texto">
+      Os textos de cada área e o teste de hábitos ainda estão em preparação. Cada conteúdo só será
+      publicado depois de revisado por quem representa a área.
+    </p>
+  </section>
+</Base>

@@ -1,0 +1,237 @@
+/* Conecta Saúde: estilos globais. Fontes do sistema, sem recursos externos. */
+:root {
+  color-scheme: light;
+  --fundo: #f6faf7;
+  --texto: #15302a;
+  --texto-suave: #46605a;
+  --primaria: #1c6a4f;
+  --primaria-escura: #124a37;
+  --linha: #c9d9d0;
+  --tinta-suave: #e6f1ea;
+  --foco: #9a4a00;
+
+  --fonte-titulo: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --fonte-corpo: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  --largura: 46rem;
+  --recuo: clamp(1rem, 5vw, 1.75rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fonte-corpo);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--texto);
+  background: var(--fundo);
+}
+
+.pagina {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 100%;
+  max-width: var(--largura);
+  margin-inline: auto;
+  padding-inline: var(--recuo);
+}
+
+.principal {
+  flex: 1;
+  padding-block: 2.5rem 3.5rem;
+}
+
+/* O foco chega aqui pelo link "Ir para o conteúdo". Mantém o indicador global de foco
+   (:focus-visible), desenhado para dentro da caixa porque ela ocupa a largura toda da tela. */
+.principal:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Tipografia */
+h1,
+h2 {
+  font-family: var(--fonte-titulo);
+  color: var(--primaria-escura);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: clamp(2.1rem, 7vw, 3rem);
+  margin: 0 0 1rem;
+}
+
+h2 {
+  font-size: clamp(1.4rem, 4.5vw, 1.75rem);
+  margin: 2.5rem 0 0.75rem;
+}
+
+.texto {
+  max-width: 66ch;
+  margin: 0 0 1rem;
+}
+
+a {
+  color: var(--primaria-escura);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--primaria);
+}
+
+:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 3px;
+}
+
+/* Link para pular a navegação */
+.pular {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  padding: 0.6rem 1rem;
+  background: var(--primaria-escura);
+  color: #fff;
+  border-radius: 0.375rem;
+  z-index: 10;
+}
+
+.pular:focus {
+  top: 0.5rem;
+}
+
+/* Cabeçalho */
+.cabecalho {
+  border-bottom: 1px solid var(--linha);
+}
+
+.cabecalho-conteudo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  padding-block: 0.5rem;
+}
+
+.marca {
+  font-family: var(--fonte-titulo);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primaria-escura);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  text-decoration: none;
+}
+
+.menu a:hover {
+  text-decoration: underline;
+}
+
+.menu a[aria-current="page"] {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-decoration-color: var(--primaria);
+}
+
+/* Abertura da página inicial */
+.abertura {
+  padding-block: 1rem 0.5rem;
+}
+
+.abertura h1 {
+  font-size: clamp(2.6rem, 11vw, 4.25rem);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+
+.chamada {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  line-height: 1.35;
+  max-width: 28ch;
+  margin: 0;
+  color: var(--texto-suave);
+}
+
+/* Áreas participantes */
+.areas {
+  display: grid;
+  gap: 1rem 2rem;
+  margin: 1.5rem 0 0;
+}
+
+@media (min-width: 40rem) {
+  .areas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.area {
+  padding-inline-start: 0.9rem;
+  border-inline-start: 3px solid var(--primaria);
+}
+
+.area dt {
+  font-family: var(--fonte-titulo);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primaria-escura);
+}
+
+.area dd {
+  margin: 0.15rem 0 0;
+  color: var(--texto-suave);
+}
+
+/* Rodapé */
+.rodape {
+  background: var(--tinta-suave);
+  border-top: 1px solid var(--linha);
+  padding-block: 1.5rem;
+  font-size: 0.95rem;
+}
+
+.aviso-educativo {
+  margin: 0 0 0.75rem;
+  max-width: 66ch;
+}
+
+.rodape-nome {
+  margin: 0;
+  color: var(--texto-suave);
+}

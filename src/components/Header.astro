@@ -1,0 +1,25 @@
+---
+import { url } from '../lib/url';
+
+const itens = [
+  { rotulo: 'Início', caminho: '/' },
+  { rotulo: 'Sobre', caminho: '/sobre/' },
+];
+const atual = Astro.url.pathname;
+---
+<header class="cabecalho">
+  <div class="container cabecalho-conteudo">
+    <a class="marca" href={url('/')}>Conecta Saúde</a>
+    <nav aria-label="Principal">
+      <ul class="menu">
+        {itens.map((item) => (
+          <li>
+            <a href={url(item.caminho)} aria-current={atual === url(item.caminho) ? 'page' : undefined}>
+              {item.rotulo}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

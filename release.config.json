@@ -1,0 +1,20 @@
+{
+  "estagio": "preparacao",
+  "temasObrigatorios": [
+    "alimentacao",
+    "saude-mental",
+    "prevencao",
+    "movimento",
+    "saude-bucal",
+    "exames",
+    "tecnologia"
+  ],
+  "categoriasObrigatorias": [
+    "sono",
+    "alimentacao",
+    "movimento",
+    "saude-bucal",
+    "estresse",
+    "acompanhamento-saude"
+  ]
+}

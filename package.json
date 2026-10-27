@@ -1,0 +1,35 @@
+{
+  "name": "conecta-saude",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Site educativo do projeto Conecta Saúde (Astro, estático, GitHub Pages).",
+  "engines": {
+    "node": ">=24.22.1 <25"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "check:node": "node scripts/check-node.mjs",
+    "check:release": "node scripts/check-release.mjs",
+    "check:links": "node scripts/check-links.mjs",
+    "build:test": "MODO=teste astro build",
+    "test:e2e:teste": "PW_ALVO=teste playwright test",
+    "test:e2e:producao": "PW_ALVO=producao playwright test",
+    "ci:build": "npm run check:node && npm run check && npm test && npm run build:test && npm run test:e2e:teste && npm run build && npm run check:release && npm run check:links && npm run test:e2e:producao"
+  },
+  "dependencies": {
+    "astro": "7.4.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.64.1",
+    "@types/node": "24.19.2",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}

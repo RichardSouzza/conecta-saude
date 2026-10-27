@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-test/
+.astro/
+.env
+.env.*
+*.log
+.DS_Store
+test-results/
+playwright-report/
