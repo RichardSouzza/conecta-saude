@@ -8,7 +8,7 @@
     "node": ">=24.22.1 <25"
   },
   "scripts": {
-    "dev": "astro dev",
+    "dev": "cross-env MODO=teste astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
@@ -16,9 +16,9 @@
     "check:node": "node scripts/check-node.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check:links": "node scripts/check-links.mjs",
-    "build:test": "MODO=teste astro build",
-    "test:e2e:teste": "PW_ALVO=teste playwright test",
-    "test:e2e:producao": "PW_ALVO=producao playwright test",
+    "build:test": "cross-env MODO=teste astro build",
+    "test:e2e:teste": "cross-env PW_ALVO=teste playwright test",
+    "test:e2e:producao": "cross-env PW_ALVO=producao playwright test",
     "ci:build": "npm run check:node && npm run check && npm test && npm run build:test && npm run test:e2e:teste && npm run build && npm run check:release && npm run check:links && npm run test:e2e:producao"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@axe-core/playwright": "4.14.0",
     "@playwright/test": "1.64.1",
     "@types/node": "24.19.2",
+    "cross-env": "10.1.0",
     "typescript": "6.0.3",
     "vitest": "5.0.5"
   }

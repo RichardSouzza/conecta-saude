@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
-import { BASE } from './helpers';
+import { BASE, PAGINAS } from './helpers';
 
 const DOC_PAGES = 'https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages';
 
 test.describe('caminho-base /conecta-saude/', () => {
   test('todos os links internos usam o caminho-base', async ({ page }) => {
-    for (const caminho of ['', 'sobre/', 'nao-existe/']) {
+    for (const { caminho } of PAGINAS) {
       await page.goto(caminho);
       const destinos = await page.$$eval('a[href], link[href]', (els) => els.map((e) => e.getAttribute('href') ?? ''));
       for (const href of destinos) {
@@ -15,9 +15,11 @@ test.describe('caminho-base /conecta-saude/', () => {
     }
   });
 
-  test('o favicon responde sob o caminho-base', async ({ page }) => {
+  test('o favicon responde sob o caminho-base', async ({ page, baseURL }) => {
     const resposta = await page.request.get('favicon.svg');
+    expect(resposta.url()).toBe(new URL('favicon.svg', baseURL).href);
     expect(resposta.status()).toBe(200);
+    expect(resposta.headers()['content-type']).toContain('svg');
   });
 
   test('o menu navega entre as páginas mantendo o caminho-base', async ({ page }) => {

@@ -1,0 +1,44 @@
+---
+import { render } from 'astro:content';
+import AvisoRascunho from '../../components/AvisoRascunho.astro';
+import Referencias from '../../components/Referencias.astro';
+import Base from '../../layouts/Base.astro';
+import { listarTemas } from '../../lib/conteudo';
+import { formatarData } from '../../lib/tema';
+
+export async function getStaticPaths() {
+  const temas = await listarTemas();
+  return temas.map((tema) => ({ params: { slug: tema.id }, props: { tema } }));
+}
+
+const { tema } = Astro.props;
+const { data } = tema;
+const { Content } = await render(tema);
+---
+<Base titulo={data.title} descricao={data.resumo}>
+  <article
+    class="tema"
+    data-conteudo={data.status}
+    data-tema={tema.id}
+    data-revisado-por={data.revisadoPor}
+    data-revisado-em={data.revisadoEm}
+    data-referencias={data.referencias.length}
+  >
+    {data.status === 'rascunho' && <AvisoRascunho />}
+    <header class="tema-cabecalho">
+      <p class="tema-area"><span aria-hidden="true">{data.icone}</span> {data.area}</p>
+      <h1>{data.title}</h1>
+      <p class="tema-destaque">{data.resumo}</p>
+    </header>
+    <div class="tema-corpo">
+      <Content />
+    </div>
+    <Referencias referencias={data.referencias} />
+    {data.status === 'aprovado' && data.revisadoPor && data.revisadoEm && (
+      <p class="tema-revisao">
+        Revisado por <strong>{data.revisadoPor}</strong> em
+        <time datetime={data.revisadoEm}>{formatarData(data.revisadoEm)}</time>.
+      </p>
+    )}
+  </article>
+</Base>

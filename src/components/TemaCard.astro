@@ -1,0 +1,22 @@
+---
+import type { Tema } from '../lib/conteudo';
+import { url } from '../lib/url';
+
+interface Props {
+  tema: Tema;
+}
+
+const { tema } = Astro.props;
+const { data } = tema;
+---
+<li class="tema-item" data-conteudo={data.status}>
+  <a class="tema-link" href={url(`/temas/${tema.id}/`)}>
+    <span aria-hidden="true">{data.icone}</span>
+    <span>{data.title}</span>
+  </a>
+  <p class="tema-meta">
+    {data.area}
+    {data.status === 'rascunho' && <span class="tema-estado">Em revisão</span>}
+  </p>
+  <p class="tema-resumo">{data.resumo}</p>
+</li>

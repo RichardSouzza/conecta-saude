@@ -1,0 +1,22 @@
+---
+import { formatarData } from '../lib/tema';
+
+interface Props {
+  referencias: { titulo: string; instituicao: string; url: string; acessadoEm: string }[];
+}
+
+const { referencias } = Astro.props;
+---
+{referencias.length > 0 && (
+  <section class="referencias" aria-labelledby="titulo-referencias">
+    <h2 id="titulo-referencias">Referências</h2>
+    <ol>
+      {referencias.map((r) => (
+        <li>
+          <a href={r.url} rel="noopener noreferrer">{r.titulo}</a>. {r.instituicao}. Acessado em
+          <time datetime={r.acessadoEm}>{formatarData(r.acessadoEm)}</time>.
+        </li>
+      ))}
+    </ol>
+  </section>
+)}

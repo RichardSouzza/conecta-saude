@@ -1,4 +1,3 @@
-// Falha se a versão do Node em execução não for exatamente a do .nvmrc.
 import { readFileSync } from 'node:fs';
 
 const esperado = readFileSync(new URL('../.nvmrc', import.meta.url), 'utf8')

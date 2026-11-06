@@ -1,6 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { observar, PAGINAS } from './helpers';
+import { gravacoes, instrumentarGravacoes, observar, PAGINAS } from './helpers';
 
 for (const pagina of PAGINAS) {
   test.describe(`página ${pagina.nome}`, () => {
@@ -35,8 +35,13 @@ for (const pagina of PAGINAS) {
       expect(graves).toEqual([]);
     });
 
-    test('não grava nada no aparelho', async ({ page, context }) => {
+    test('não usa as vias de armazenamento instrumentadas e termina com o armazenamento vazio', async ({ page, context }) => {
+      await instrumentarGravacoes(page);
       await page.goto(pagina.caminho);
+      await page.keyboard.press('Tab');
+      await page.waitForLoadState('networkidle');
+
+      expect(await gravacoes(page)).toEqual([]);
       const estado = await page.evaluate(async () => ({
         local: localStorage.length,
         sessao: sessionStorage.length,
@@ -63,4 +68,43 @@ test('a página 404 mostra a mensagem e leva de volta ao início', async ({ page
   await expect(page.getByRole('heading', { level: 1, name: 'Página não encontrada' })).toBeVisible();
   await page.getByRole('link', { name: 'Voltar ao início' }).click();
   await expect(page).toHaveURL(/\/conecta-saude\/$/);
+});
+
+test('controle: a instrumentação registra gravações, inclusive atribuição direta e escrita seguida de remoção', async ({ page }) => {
+  await instrumentarGravacoes(page);
+  await page.goto('');
+  await page.evaluate(async () => {
+    localStorage.setItem('chave', '1');
+    sessionStorage.setItem('chave', '1');
+    localStorage.direta = '1';
+    sessionStorage.direta = '1';
+    delete localStorage.direta;
+    document.cookie = 'a=b';
+    indexedDB.open('banco');
+    await cookieStore.set('c', 'd');
+    localStorage.clear();
+  });
+  expect(await gravacoes(page)).toEqual(
+    expect.arrayContaining([
+      'Storage.setItem',
+      'Storage.clear',
+      'localStorage.atribuição',
+      'sessionStorage.atribuição',
+      'localStorage.remoção',
+      'document.cookie',
+      'indexedDB.open',
+      'cookieStore.set',
+    ]),
+  );
+});
+
+test('o proxy de storage não altera o comportamento de leitura e escrita da página', async ({ page }) => {
+  await instrumentarGravacoes(page);
+  await page.goto('');
+  const resultado = await page.evaluate(() => {
+    localStorage.direta = '1';
+    localStorage.setItem('b', '2');
+    return { direta: localStorage.getItem('direta'), b: localStorage.b, tamanho: localStorage.length };
+  });
+  expect(resultado).toEqual({ direta: '1', b: '2', tamanho: 2 });
 });

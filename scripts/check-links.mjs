@@ -1,5 +1,4 @@
-// Verifica os links internos do dist/ respeitando o `base` do Astro.
-// Links externos (com esquema) e âncoras puras não são verificados aqui.
+// Links externos (com esquema) e âncoras puras ficam fora da verificação.
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,7 +13,6 @@ function arquivosHtml(dir) {
   return saida;
 }
 
-/** @param {{ distDir: string, base: string }} opcoes  base sem barra final ('' ou '/repo'). */
 export function verificarLinks({ distDir, base }) {
   const erros = [];
   const regex = /\s(?:href|src)=(?:"([^"]*)"|'([^']*)'|([^\s>"']+))/gi;

@@ -4,7 +4,6 @@ import { dirname, join } from 'node:path';
 
 const criados: string[] = [];
 
-/** Cria um dist/ de mentira em uma pasta temporária. */
 export function criarDist(arquivos: Record<string, string>): string {
   const raiz = mkdtempSync(join(tmpdir(), 'conecta-dist-'));
   criados.push(raiz);

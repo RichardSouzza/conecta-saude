@@ -1,4 +1,4 @@
-/* Conecta Saúde: estilos globais. Fontes do sistema, sem recursos externos. */
+/* Somente fontes do sistema: o site não carrega recursos externos. */
 :root {
   color-scheme: light;
   --fundo: #f6faf7;
@@ -9,6 +9,7 @@
   --linha: #c9d9d0;
   --tinta-suave: #e6f1ea;
   --foco: #9a4a00;
+  --aviso-fundo: #fbefd9;
 
   --fonte-titulo: Charter, "Iowan Old Style", "Palatino Linotype", Georgia, serif;
   --fonte-corpo: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -56,13 +57,12 @@ body {
   padding-block: 2.5rem 3.5rem;
 }
 
-/* O foco chega aqui pelo link "Ir para o conteúdo". Mantém o indicador global de foco
-   (:focus-visible), desenhado para dentro da caixa porque ela ocupa a largura toda da tela. */
+/* O foco chega aqui pelo link "Ir para o conteúdo". O contorno global de :focus-visible é desenhado
+   para dentro da caixa, que ocupa a largura toda da tela. */
 .principal:focus-visible {
   outline-offset: -3px;
 }
 
-/* Tipografia */
 h1,
 h2 {
   font-family: var(--fonte-titulo);
@@ -100,7 +100,6 @@ a:hover {
   outline-offset: 3px;
 }
 
-/* Link para pular a navegação */
 .pular {
   position: absolute;
   left: 0.5rem;
@@ -116,7 +115,6 @@ a:hover {
   top: 0.5rem;
 }
 
-/* Cabeçalho */
 .cabecalho {
   border-bottom: 1px solid var(--linha);
 }
@@ -168,7 +166,6 @@ a:hover {
   text-decoration-color: var(--primaria);
 }
 
-/* Abertura da página inicial */
 .abertura {
   padding-block: 1rem 0.5rem;
 }
@@ -188,7 +185,6 @@ a:hover {
   color: var(--texto-suave);
 }
 
-/* Áreas participantes */
 .areas {
   display: grid;
   gap: 1rem 2rem;
@@ -218,7 +214,6 @@ a:hover {
   color: var(--texto-suave);
 }
 
-/* Rodapé */
 .rodape {
   background: var(--tinta-suave);
   border-top: 1px solid var(--linha);
@@ -233,5 +228,129 @@ a:hover {
 
 .rodape-nome {
   margin: 0;
+  color: var(--texto-suave);
+}
+
+.lista-temas {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.tema-item {
+  padding-inline-start: 0.9rem;
+  border-inline-start: 3px solid var(--primaria);
+}
+
+.tema-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-family: var(--fonte-titulo);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.tema-meta {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+}
+
+.tema-estado {
+  margin-inline-start: 0.5rem;
+  padding: 0.05rem 0.5rem;
+  background: var(--aviso-fundo);
+  border: 1px solid var(--foco);
+  border-radius: 0.25rem;
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.tema-resumo {
+  margin: 0.25rem 0 0;
+  max-width: 66ch;
+}
+
+.aviso-rascunho {
+  max-width: 66ch;
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--aviso-fundo);
+  border-inline-start: 4px solid var(--foco);
+}
+
+.tema-area {
+  margin: 0 0 0.5rem;
+  color: var(--texto-suave);
+  font-weight: 600;
+}
+
+.tema-destaque {
+  max-width: 52ch;
+  margin: 0 0 1.5rem;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.15rem, 4vw, 1.35rem);
+  line-height: 1.4;
+  color: var(--texto-suave);
+}
+
+.tema-corpo {
+  max-width: 66ch;
+  overflow-wrap: break-word;
+}
+
+.tema-corpo > :first-child {
+  margin-top: 0;
+}
+
+.tema-corpo p,
+.tema-corpo ul,
+.tema-corpo ol {
+  margin: 0 0 1rem;
+}
+
+.tema-corpo ul,
+.tema-corpo ol,
+.referencias ol {
+  padding-inline-start: 1.4rem;
+}
+
+.tema-corpo li + li,
+.referencias li + li {
+  margin-top: 0.4rem;
+}
+
+.tema-corpo h3 {
+  margin: 1.75rem 0 0.5rem;
+  font-family: var(--fonte-titulo);
+  font-size: 1.2rem;
+  color: var(--primaria-escura);
+}
+
+.tema-corpo img {
+  max-width: 100%;
+  height: auto;
+}
+
+.tema-corpo table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.referencias {
+  max-width: 66ch;
+  overflow-wrap: anywhere;
+}
+
+.tema-revisao {
+  max-width: 66ch;
+  margin: 2rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--linha);
   color: var(--texto-suave);
 }

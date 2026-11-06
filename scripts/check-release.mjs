@@ -1,30 +1,22 @@
-// Portão de release do Conecta Saúde.
+// Portão de release. Roda sempre dentro de `npm run ci:build`, sobre o dist/ de produção.
+// O estágio e as listas obrigatórias vêm de release.config.json (versionado); não há variável de ambiente.
 //
-// Roda SEMPRE dentro de `npm run ci:build`, sobre o dist/ de produção, e não
-// depende de variável de ambiente: o estágio vem de release.config.json
-// (versionado). Se o arquivo faltar ou for inválido, o portão falha.
-//
-// Contrato com o template das páginas (Fases 2 e 3):
-//   dist/temas/<slug>/index.html  contém um elemento com
-//     data-conteudo="aprovado" data-tema="<slug>" data-revisado-por="..."
-//     data-revisado-em="AAAA-MM-DD" data-referencias="<n>"
-//   dist/quiz/index.html          contém um elemento com
-//     data-quiz-status="aprovado"
-//     data-categorias="<categoria>:<tema>,..."   (cada categoria e o tema a que ela aponta)
-//     data-aprovacoes="<categoria>,..."          (categorias com aprovação registrada)
-//
-// Fonte canônica das listas obrigatórias: release.config.json
-//   temasObrigatorios      slugs dos temas
-//   categoriasObrigatorias ids das categorias do quiz
+// Contrato com as páginas geradas (Fases 2 e 3):
+//   dist/temas/<slug>/index.html  elemento com data-conteudo="aprovado" data-tema="<slug>"
+//                                 data-revisado-por="..." data-revisado-em="AAAA-MM-DD" data-referencias="<n>"
+//   dist/quiz/index.html          elemento com data-quiz-status="aprovado"
+//                                 data-categorias="<categoria>:<tema>,..."  (categoria e tema a que aponta)
+//                                 data-aprovacoes="<categoria>,..."
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ESTAGIOS = ['preparacao', 'final'];
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const PAR_CATEGORIA_TEMA = /^([a-z0-9]+(?:-[a-z0-9]+)*):([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const DATA = /^\d{4}-\d{2}-\d{2}$/;
+const INTEIRO_POSITIVO = /^[1-9]\d*$/;
 
-// Qualquer um destes textos no dist/ de produção derruba o build.
 const MARCADORES_PROIBIDOS = [
   { re: /data-conteudo=["']?(rascunho|demonstracao)\b/i, nome: 'atributo data-conteudo de rascunho ou demonstração' },
   { re: /Conteúdo em revisão/, nome: 'banner "Conteúdo em revisão"' },
@@ -45,7 +37,6 @@ function validarListaSlugs(config, campo, erros) {
   }
 }
 
-/** Valida o objeto de release.config.json. Retorna a lista de erros. */
 export function validarConfig(config) {
   const erros = [];
   if (config === null || typeof config !== 'object' || Array.isArray(config)) {
@@ -59,7 +50,6 @@ export function validarConfig(config) {
   return erros;
 }
 
-/** Lê e valida release.config.json a partir da raiz do projeto. */
 export function lerConfig(raiz) {
   const caminho = join(raiz, 'release.config.json');
   if (!existsSync(caminho)) {
@@ -93,11 +83,14 @@ function atributo(html, nome) {
   return (m[1] ?? m[2] ?? m[3] ?? '').trim();
 }
 
+// Mantém segmentos vazios ("a,,b", "a,", ",a") para que quem chama os rejeite.
 function lista(valor) {
-  return (valor ?? '')
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean);
+  if (valor === null || valor.trim() === '') return [];
+  return valor.split(',').map((s) => s.trim());
+}
+
+function duplicados(itens) {
+  return [...new Set(itens.filter((x, i) => itens.indexOf(x) !== i))];
 }
 
 function dataValida(valor, hoje) {
@@ -107,46 +100,55 @@ function dataValida(valor, hoje) {
   return valor <= hoje.toISOString().slice(0, 10);
 }
 
-function duplicados(itens) {
-  return [...new Set(itens.filter((x, i) => itens.indexOf(x) !== i))];
-}
-
-/** Compara as categorias declaradas pelo quiz publicado com a lista canônica do release.config.json. */
 function verificarCategoriasQuiz({ html, config, temasPublicados }) {
   const erros = [];
-  const declaradas = [];
-  const vinculos = new Map();
+  const pares = [];
 
-  for (const par of lista(atributo(html, 'categorias'))) {
-    const m = par.match(/^([a-z0-9]+(?:-[a-z0-9]+)*):([a-z0-9]+(?:-[a-z0-9]+)*)$/);
-    if (!m) {
-      erros.push(`quiz/: entrada inválida em data-categorias: "${par}" (use categoria:tema).`);
-      continue;
+  lista(atributo(html, 'categorias')).forEach((entrada, i) => {
+    if (entrada === '') {
+      erros.push(`quiz/: segmento vazio em data-categorias (posição ${i + 1}).`);
+      return;
     }
-    declaradas.push(m[1]);
-    vinculos.set(m[1], m[2]);
-  }
-  const unicas = [...new Set(declaradas)];
+    const m = entrada.match(PAR_CATEGORIA_TEMA);
+    if (m) pares.push({ categoria: m[1], tema: m[2] });
+    else erros.push(`quiz/: entrada inválida em data-categorias: "${entrada}" (use categoria:tema).`);
+  });
+  const declaradas = [...new Set(pares.map((p) => p.categoria))];
 
-  if (declaradas.length === 0) erros.push('quiz/: nenhuma categoria declarada (data-categorias).');
-  for (const c of duplicados(declaradas)) erros.push(`quiz/: categoria "${c}" declarada mais de uma vez.`);
-  for (const c of config.categoriasObrigatorias.filter((c) => !unicas.includes(c))) {
+  if (pares.length === 0 && erros.length === 0) erros.push('quiz/: nenhuma categoria declarada (data-categorias).');
+
+  for (const categoria of declaradas) {
+    const doPar = pares.filter((p) => p.categoria === categoria);
+    const temas = [...new Set(doPar.map((p) => p.tema))];
+    if (temas.length > 1) {
+      erros.push(`quiz/: a categoria "${categoria}" tem vínculos conflitantes (${temas.join(', ')}).`);
+    } else if (doPar.length > 1) {
+      erros.push(`quiz/: categoria "${categoria}" declarada mais de uma vez.`);
+    }
+  }
+  for (const c of config.categoriasObrigatorias.filter((c) => !declaradas.includes(c))) {
     erros.push(`quiz/: categoria obrigatória "${c}" não declarada.`);
   }
-  for (const c of unicas.filter((c) => !config.categoriasObrigatorias.includes(c))) {
+  for (const c of declaradas.filter((c) => !config.categoriasObrigatorias.includes(c))) {
     erros.push(`quiz/: categoria inesperada "${c}" (não consta em categoriasObrigatorias).`);
   }
 
-  const aprovadas = lista(atributo(html, 'aprovacoes'));
+  const aprovacoesBrutas = lista(atributo(html, 'aprovacoes'));
+  aprovacoesBrutas.forEach((entrada, i) => {
+    if (entrada === '') erros.push(`quiz/: segmento vazio em data-aprovacoes (posição ${i + 1}).`);
+  });
+  const aprovadas = aprovacoesBrutas.filter((c) => c !== '');
   for (const c of duplicados(aprovadas)) erros.push(`quiz/: aprovação da categoria "${c}" registrada mais de uma vez.`);
-  for (const c of unicas.filter((c) => !aprovadas.includes(c))) {
+  for (const c of declaradas.filter((c) => !aprovadas.includes(c))) {
     erros.push(`quiz/: a categoria "${c}" não tem aprovação registrada (data-aprovacoes).`);
   }
-  for (const c of [...new Set(aprovadas)].filter((c) => !unicas.includes(c))) {
+  for (const c of [...new Set(aprovadas)].filter((c) => !declaradas.includes(c))) {
     erros.push(`quiz/: aprovação registrada para a categoria "${c}", que não está declarada.`);
   }
 
-  for (const [categoria, tema] of vinculos) {
+  const vinculos = new Set(pares.map((p) => `${p.categoria}:${p.tema}`));
+  for (const vinculo of vinculos) {
+    const [categoria, tema] = vinculo.split(':');
     if (!temasPublicados.includes(tema)) {
       erros.push(`quiz/: a categoria "${categoria}" aponta para o tema "${tema}", que não está publicado.`);
     }
@@ -154,10 +156,7 @@ function verificarCategoriasQuiz({ html, config, temasPublicados }) {
   return erros;
 }
 
-/**
- * Verifica o dist/ de produção contra o estágio configurado.
- * @param {{ distDir: string, config: { estagio: string, temasObrigatorios: string[] }, hoje?: Date }} opcoes
- */
+/** @param {{ distDir: string, config: { estagio: string, temasObrigatorios: string[], categoriasObrigatorias: string[] }, hoje?: Date }} opcoes */
 export function verificarRelease({ distDir, config, hoje = new Date() }) {
   const erros = [];
 
@@ -167,13 +166,11 @@ export function verificarRelease({ distDir, config, hoje = new Date() }) {
 
   const entradas = listarEntradas(distDir);
 
-  // 1. Nenhuma entrada oculta, em qualquer nível. O upload para o Pages as
-  //    descarta, então o artefato deixaria de ser idêntico ao dist/ validado.
+  // O upload para o Pages descarta entradas ocultas; se existissem, o artefato deixaria de ser o dist/ validado.
   for (const e of entradas.filter((x) => x.nome.startsWith('.'))) {
     erros.push(`Entrada oculta em dist/: ${e.rel}`);
   }
 
-  // 2. Nenhum marcador de rascunho ou demonstração em nenhum HTML publicado.
   for (const e of entradas.filter((x) => !x.ehDir && x.nome.endsWith('.html'))) {
     const html = readFileSync(e.completo, 'utf8');
     for (const m of MARCADORES_PROIBIDOS) {
@@ -181,7 +178,6 @@ export function verificarRelease({ distDir, config, hoje = new Date() }) {
     }
   }
 
-  // 3. Temas publicados: todos aprovados, com revisor, data e referência.
   const temasPublicados = [];
   const dirTemas = join(distDir, 'temas');
   if (existsSync(dirTemas)) {
@@ -195,27 +191,25 @@ export function verificarRelease({ distDir, config, hoje = new Date() }) {
       if (atributo(html, 'tema') !== slug) erros.push(`${onde}: data-tema ausente ou diferente do slug.`);
       if (!atributo(html, 'revisado-por')) erros.push(`${onde}: sem revisor (data-revisado-por).`);
       if (!dataValida(atributo(html, 'revisado-em'), hoje)) erros.push(`${onde}: data da revisão ausente, inválida ou no futuro (data-revisado-em).`);
-      const refs = Number.parseInt(atributo(html, 'referencias') ?? '', 10);
-      if (!(refs >= 1)) erros.push(`${onde}: sem referências (data-referencias deve ser >= 1).`);
+      const refs = atributo(html, 'referencias');
+      if (refs === null || !INTEIRO_POSITIVO.test(refs)) {
+        erros.push(`${onde}: sem referências (data-referencias deve ser um inteiro >= 1).`);
+      }
     }
   }
 
-  // 4. Quiz: proibido em preparacao; obrigatório e aprovado em final.
   const paginaQuiz = join(distDir, 'quiz', 'index.html');
   const quizPresente = existsSync(join(distDir, 'quiz'));
   if (config.estagio === 'preparacao') {
     if (quizPresente) erros.push('quiz/: o quiz não pode ser publicado no estágio "preparacao".');
+  } else if (!existsSync(paginaQuiz)) {
+    erros.push('quiz/: o estágio "final" exige o quiz publicado.');
   } else {
-    if (!existsSync(paginaQuiz)) {
-      erros.push('quiz/: o estágio "final" exige o quiz publicado.');
-    } else {
-      const html = readFileSync(paginaQuiz, 'utf8');
-      if (atributo(html, 'quiz-status') !== 'aprovado') erros.push('quiz/: data-quiz-status deve ser "aprovado".');
-      erros.push(...verificarCategoriasQuiz({ html, config, temasPublicados }));
-    }
+    const html = readFileSync(paginaQuiz, 'utf8');
+    if (atributo(html, 'quiz-status') !== 'aprovado') erros.push('quiz/: data-quiz-status deve ser "aprovado".');
+    erros.push(...verificarCategoriasQuiz({ html, config, temasPublicados }));
   }
 
-  // 5. Estágio final: todos os temas obrigatórios publicados.
   if (config.estagio === 'final') {
     for (const t of config.temasObrigatorios.filter((t) => !temasPublicados.includes(t))) {
       erros.push(`temas/${t}: tema obrigatório não publicado (estágio "final").`);
@@ -225,8 +219,19 @@ export function verificarRelease({ distDir, config, hoje = new Date() }) {
   return { erros, resumo: { estagio: config.estagio, temas: temasPublicados, quiz: quizPresente } };
 }
 
+function raizDoProjeto() {
+  const i = process.argv.indexOf('--raiz');
+  if (i === -1) return resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  const valor = process.argv[i + 1];
+  if (!valor) {
+    console.error('✖ --raiz exige o caminho da raiz do projeto.');
+    process.exit(1);
+  }
+  return resolve(valor);
+}
+
 function principal() {
-  const raiz = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  const raiz = raizDoProjeto();
   const { config, erros: errosConfig } = lerConfig(raiz);
   if (!config) {
     for (const e of errosConfig) console.error(`✖ ${e}`);

@@ -120,6 +120,40 @@ describe('temas publicados', () => {
   });
 });
 
+describe('data-referencias de temas publicados', () => {
+  const comReferencias = (valor: string | null) => {
+    let html = paginaTema('alimentacao', { referencias: valor ?? '' });
+    if (valor === null) html = html.replace(/ data-referencias="[^"]*"/, '');
+    return rodar({ 'index.html': PAGINA_INICIAL, 'temas/alimentacao/index.html': html }).erros;
+  };
+
+  it.each(['1', '2', '10'])('aceita %s', (valor) => {
+    expect(comReferencias(valor)).toEqual([]);
+  });
+
+  it.each([
+    ['0', '0'],
+    ['negativo', '-1'],
+    ['parcialmente numérico', '1abc'],
+    ['decimal', '1.5'],
+    ['decimal com zero', '2.0'],
+    ['vazio', ''],
+    ['só espaços', '  '],
+    ['hexadecimal', '0x10'],
+    ['notação científica', '1e2'],
+    ['com sinal positivo', '+2'],
+    ['com zero à esquerda', '01'],
+    ['não numérico', 'abc'],
+    ['Infinity', 'Infinity'],
+  ])('rejeita %s (%s)', (_nome, valor) => {
+    expect(comReferencias(valor).join('\n')).toContain('data-referencias deve ser um inteiro >= 1');
+  });
+
+  it('rejeita o atributo ausente', () => {
+    expect(comReferencias(null).join('\n')).toContain('data-referencias deve ser um inteiro >= 1');
+  });
+});
+
 describe('estágio "final"', () => {
   it('passa com todos os temas obrigatórios e o quiz aprovado', () => {
     const { erros } = rodar(finalCompleto(), FINAL);
@@ -186,9 +220,20 @@ describe('estágio "final": categorias do quiz', () => {
     expect(erros).toContain('categoria inesperada "extra"');
   });
 
-  it('falha com categoria declarada em duplicidade', () => {
-    const erros = comQuiz({ categorias: 'sono:saude-mental,sono:alimentacao,alimentacao:alimentacao' });
+  it('falha com categoria duplicada e o mesmo vínculo', () => {
+    const erros = comQuiz({ categorias: 'sono:saude-mental,sono:saude-mental,alimentacao:alimentacao' });
     expect(erros).toContain('categoria "sono" declarada mais de uma vez');
+    expect(erros).not.toContain('vínculos conflitantes');
+  });
+
+  it('falha com categoria duplicada e vínculos conflitantes', () => {
+    const erros = comQuiz({ categorias: 'sono:saude-mental,sono:alimentacao,alimentacao:alimentacao' });
+    expect(erros).toContain('a categoria "sono" tem vínculos conflitantes (saude-mental, alimentacao)');
+  });
+
+  it('verifica todos os vínculos de uma categoria duplicada, não só o último', () => {
+    const erros = comQuiz({ categorias: 'sono:exames,sono:saude-mental,alimentacao:alimentacao' });
+    expect(erros).toContain('a categoria "sono" aponta para o tema "exames", que não está publicado');
   });
 
   it('falha com aprovação registrada em duplicidade', () => {
@@ -199,9 +244,84 @@ describe('estágio "final": categorias do quiz', () => {
     expect(comQuiz({ categorias: 'sono,alimentacao:alimentacao' })).toContain('entrada inválida em data-categorias: "sono"');
   });
 
+  it.each([
+    ['vínculo vazio', 'sono:,alimentacao:alimentacao', 'sono:'],
+    ['categoria vazia', ':saude-mental,alimentacao:alimentacao', ':saude-mental'],
+    ['tema com letras maiúsculas', 'sono:Saude-Mental,alimentacao:alimentacao', 'sono:Saude-Mental'],
+    ['mais de um separador', 'sono:saude-mental:extra,alimentacao:alimentacao', 'sono:saude-mental:extra'],
+    ['espaço dentro do id', 'sono :saude-mental,alimentacao:alimentacao', 'sono :saude-mental'],
+  ])('falha com %s em data-categorias', (_nome, categorias, entrada) => {
+    expect(comQuiz({ categorias })).toContain(`entrada inválida em data-categorias: "${entrada}"`);
+  });
+
+  it('falha com aprovações vazias', () => {
+    const erros = comQuiz({ aprovacoes: '' });
+    expect(erros).toContain('categoria "sono" não tem aprovação registrada');
+    expect(erros).toContain('categoria "alimentacao" não tem aprovação registrada');
+  });
+
+  it('falha quando só parte das categorias foi aprovada e há aprovação sem declaração', () => {
+    const erros = comQuiz({ aprovacoes: 'sono,estresse' });
+    expect(erros).toContain('categoria "alimentacao" não tem aprovação registrada');
+    expect(erros).toContain('aprovação registrada para a categoria "estresse", que não está declarada');
+  });
+
+  it('falha com categoria obrigatória ausente mesmo que haja categoria inesperada aprovada no lugar', () => {
+    const erros = comQuiz({ categorias: 'sono:saude-mental,extra:alimentacao', aprovacoes: 'sono,extra' });
+    expect(erros).toContain('categoria obrigatória "alimentacao" não declarada');
+    expect(erros).toContain('categoria inesperada "extra"');
+  });
+
+  it.each([
+    ['segmento vazio no meio', 'sono:saude-mental,,alimentacao:alimentacao', 2],
+    ['vírgula final', 'sono:saude-mental,', 2],
+    ['vírgula inicial', ',sono:saude-mental', 1],
+    ['segmento só com espaços', 'sono:saude-mental, ,alimentacao:alimentacao', 2],
+  ])('rejeita %s em data-categorias', (_nome, categorias, posicao) => {
+    expect(comQuiz({ categorias })).toContain(`segmento vazio em data-categorias (posição ${posicao})`);
+  });
+
+  it('rejeita o segmento vazio mesmo quando todas as categorias obrigatórias estão presentes e aprovadas', () => {
+    expect(comQuiz({ categorias: 'sono:saude-mental,,alimentacao:alimentacao' })).toBe(
+      'quiz/: segmento vazio em data-categorias (posição 2).',
+    );
+  });
+
+  it('rejeita data-categorias formado só por vírgulas', () => {
+    const erros = comQuiz({ categorias: ',' });
+    expect(erros).toContain('segmento vazio em data-categorias (posição 1)');
+    expect(erros).toContain('segmento vazio em data-categorias (posição 2)');
+    expect(erros).toContain('categoria obrigatória "sono" não declarada');
+  });
+
+  it.each([
+    ['segmento vazio no meio', 'sono,,alimentacao', 2],
+    ['vírgula final', 'sono,', 2],
+    ['vírgula inicial', ',sono,alimentacao', 1],
+    ['segmento só com espaços', 'sono, ,alimentacao', 2],
+  ])('rejeita %s em data-aprovacoes', (_nome, aprovacoes, posicao) => {
+    expect(comQuiz({ aprovacoes })).toContain(`segmento vazio em data-aprovacoes (posição ${posicao})`);
+  });
+
+  it('rejeita o segmento vazio em data-aprovacoes mesmo com todas as categorias aprovadas', () => {
+    expect(comQuiz({ aprovacoes: 'sono,,alimentacao' })).toBe('quiz/: segmento vazio em data-aprovacoes (posição 2).');
+  });
+
+  it('continua aceitando espaços ao redor das vírgulas', () => {
+    expect(comQuiz({ categorias: 'sono:saude-mental, alimentacao:alimentacao', aprovacoes: 'sono, alimentacao' })).toBe('');
+  });
+
   it('falha se a categoria apontar para um tema não publicado', () => {
     expect(comQuiz({ categorias: 'sono:exames,alimentacao:alimentacao' })).toContain(
       'a categoria "sono" aponta para o tema "exames", que não está publicado',
     );
+  });
+
+  it('não aceita vínculo com tema que existe só como obrigatório mas não foi publicado', () => {
+    const arquivos = finalCompleto();
+    delete arquivos['temas/saude-mental/index.html'];
+    const erros = rodar(arquivos, FINAL).erros.join('\n');
+    expect(erros).toContain('a categoria "sono" aponta para o tema "saude-mental", que não está publicado');
+    expect(erros).toContain('temas/saude-mental: tema obrigatório não publicado');
   });
 });

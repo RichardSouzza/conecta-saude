@@ -1,5 +1,7 @@
 ---
+import TemaCard from '../components/TemaCard.astro';
 import Base from '../layouts/Base.astro';
+import { listarTemas } from '../lib/conteudo';
 
 const areas = [
   { nome: 'Enfermagem', foco: 'prevenção e cuidados básicos com a saúde.' },
@@ -10,6 +12,7 @@ const areas = [
   { nome: 'Biomedicina', foco: 'prevenção e importância dos exames e indicadores de saúde.' },
   { nome: 'Computação', foco: 'como a tecnologia pode facilitar o acesso à informação e ao cuidado.' },
 ];
+const temas = await listarTemas();
 ---
 <Base titulo="Conecta Saúde">
   <section class="abertura" aria-labelledby="titulo-pagina">
@@ -33,11 +36,20 @@ const areas = [
     </dl>
   </section>
 
+  {temas.length > 0 && (
+    <section aria-labelledby="titulo-temas">
+      <h2 id="titulo-temas">Temas</h2>
+      <ul class="lista-temas">
+        {temas.map((tema) => <TemaCard tema={tema} />)}
+      </ul>
+    </section>
+  )}
+
   <section aria-labelledby="titulo-preparo">
     <h2 id="titulo-preparo">Conteúdos em preparação</h2>
     <p class="texto">
-      Os textos de cada área e o teste de hábitos ainda estão em preparação. Cada conteúdo só será
-      publicado depois de revisado por quem representa a área.
+      {temas.length > 0 ? 'Os demais textos de cada área' : 'Os textos de cada área'} e o teste de hábitos ainda estão em
+      preparação. Cada conteúdo só será publicado depois de revisado por quem representa a área.
     </p>
   </section>
 </Base>

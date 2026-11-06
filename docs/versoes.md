@@ -1,6 +1,6 @@
 # Versões fixadas
 
-Verificado em 26 e 27/10/2026 (consulta ao registro npm, `npm ci` e `npm run ci:build` completos).
+Verificado em 26 e 27/10/2026 (consulta ao registro npm, `npm ci` e `npm run ci:build` completos). Todas as dependências são de desenvolvimento, exceto `astro`; nenhuma vai para o site publicado.
 
 ## Ambiente
 
@@ -20,6 +20,7 @@ Verificado em 26 e 27/10/2026 (consulta ao registro npm, `npm ci` e `npm run ci:
 | @types/node | 24.19.2 | alinhado ao Node 24 |
 | @playwright/test | 1.64.1 | node >=20 |
 | @axe-core/playwright | 4.14.0 | node >=22.12; peer playwright-core >=1, atendido pelo 1.64.1 do `@playwright/test` |
+| cross-env | 10.1.0 | node >=20 |
 
 Resolvidas por transitividade: vite 8.3.5 (única versão), zod 4.6.7, @astrojs/language-server 2.17.3, playwright e playwright-core 1.64.1 (única versão), axe-core 4.14.0.
 

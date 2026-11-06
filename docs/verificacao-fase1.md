@@ -1,39 +1,69 @@
-# Verificação da Fase 1 (revisão 1)
+# Verificação da Fase 1 (revisão 4)
 
-Executada em 27/10/2026 (UTC), com Node 24.22.1 e a instalação limpa feita por `npm ci`.
+Resultados observados em 31/10/2026 (UTC). O que não foi executado está listado em "Não executado".
 
-## Resultados reais
+## Executado localmente (Linux, Node 24.22.1, npm 10.9.7)
+
+Instalação limpa (`rm -rf node_modules dist dist-test .astro`), depois `npm ci` e `npm run ci:build`, sem
+arquivo de configuração alternativo. Código de saída do `ci:build`: 0.
 
 | Etapa | Resultado |
 |---|---|
-| `npm ci` | 294 pacotes, sem erro |
-| `npm run check:node` | Node 24.22.1 confere com o `.nvmrc` |
-| `npm run check` (astro check) | 0 erros, 0 avisos, 0 dicas |
-| `npm test` (Vitest) | 2 arquivos, 48 testes aprovados |
-| `npm run build:test` | 3 páginas em `dist-test/` |
-| Playwright sobre `dist-test/` | 24 testes aprovados |
-| `npm run build` | 3 páginas em `dist/`, caminho-base `/conecta-saude/` |
-| `npm run check:release` | aprovado (estágio `preparacao`, 0 temas, quiz ausente) |
-| `npm run check:links` | aprovado (base `/conecta-saude`) |
-| Playwright sobre `dist/` | 24 testes aprovados |
+| `npm ci` | 302 pacotes instalados; `package.json` e `package-lock.json` idênticos antes e depois (mesmo hash) |
+| `check:node` | Node 24.22.1 confere com o `.nvmrc` |
+| `check` (astro check) | 0 erros, 0 avisos |
+| `test` (Vitest) | 3 arquivos, 84 testes aprovados |
+| `build:test` | 3 páginas em `dist-test/` |
+| `test:e2e:teste` (Playwright) | 26 aprovados |
+| `build` | 3 páginas em `dist/` |
+| `check:release` | aprovado (estágio `preparacao`, 0 temas, quiz ausente) |
+| `check:links` | aprovado (base `/conecta-saude`) |
+| `test:e2e:producao` (Playwright) | 26 aprovados |
 
-Conferências adicionais: nenhuma entrada oculta em `dist/`; `check:release` reprovou `dist/.nojekyll`,
-`dist/.well-known` e `dist/a/b/.segredo` (exit 1); com `MODO=teste` o servidor serve `dist-test/` e sem `MODO`
-serve `dist/`; o job de deploy contém só `actions/deploy-pages` e um `curl`, sem checkout, instalação nem build.
+Dependências: conferidas por script nos arquivos reais (projeto e todos os ZIPs entregues): `dependencies` contém
+só `astro` e as sete ferramentas estão em `devDependencies`, sem divergência de versão com o lockfile. `npm ci --dry-run` confirma `package.json` e lockfile em sincronia; a raiz do lockfile coincide com
+o `package.json`. `astro` é a única entrada de `dependencies`; `@astrojs/check`, `@axe-core/playwright`,
+`@playwright/test`, `@types/node`, `cross-env`, `typescript` e `vitest` estão em `devDependencies`. No lockfile,
+todos esses pacotes (exceto `@types/node`) têm `"dev": true`. O `@types/node` não recebe a marca porque o `vite`,
+dependência do `astro`, o declara como peer opcional; ele só serve à tipagem e não é usado em tempo de execução.
 
-Prova de mutação: com `.principal:focus { outline: none; }` reintroduzida, o teste de foco do conteúdo principal
-falha; com a correção, os 4 testes de navegação passam.
+Provas de mutação (o teste falha quando o defeito é reintroduzido e passa depois de restaurado):
 
-## Limitações
+- Com a implementação antiga de `lista()` (que descartava segmentos vazios), 12 testes novos falham; com a
+  correção, os 84 passam.
+- Script que grava e apaga um item em `localStorage` durante a carga: o teste de privacidade falha por
+  `Storage.setItem`/`Storage.removeItem`, embora o estado final esteja vazio.
+- Script que atribui `localStorage.x = '1'` e depois `delete localStorage.x`: o teste falha por
+  `localStorage.atribuição`/`localStorage.remoção`.
+- Regra `outline: none` no conteúdo principal (revisão anterior): o teste de foco falha.
 
-- O CDN do Playwright é inacessível no ambiente de verificação. Os testes de navegador rodaram com um Chromium
-  153.0.8010.0 obtido por um pacote npm, usado por um arquivo de configuração temporário fora do projeto (já
-  removido). A CI usará o Chromium do Playwright 1.64.1 (156.0.8078.4). Portanto, `npm run ci:build`, exatamente
-  como escrito, **não foi executado aqui**: cada etapa foi executada separadamente, na mesma ordem, trocando
-  apenas o arquivo de configuração do Playwright.
-- Só Chromium foi usado. Safari/iOS, Firefox e leitores de tela não foram testados.
-- O workflow do GitHub Actions não foi executado (depende do GitHub); foi verificado apenas por análise da
-  estrutura do YAML.
-- O npm do ambiente é o 10.9.7; na CI será o que acompanha o Node 24.22.1.
-- O patch Node 24.22.1 ainda precisa de confirmação no nodejs.org.
-- `check-quiz-persistence.mjs` não existe ainda: não há código de quiz (Fase 3).
+## Verificado por inspeção ou lint estático
+
+- Workflow: `actionlint` 1.7.12 (checksum SHA-256 conferido) sem apontamentos na revisão anterior; o arquivo do
+  workflow não mudou nesta revisão.
+- Portabilidade dos scripts de `package.json` e do `playwright.config.ts`: revisados; variáveis de ambiente usam
+  `cross-env` e `webServer.env`.
+
+## Substituição de navegador (não silenciosa)
+
+O CDN do Playwright é inacessível no ambiente. O Playwright 1.64.1 espera o Chrome for Testing 156.0.8078.4.
+Os testes rodaram com o Chromium 153.0.8010.0 (pacote npm `@sparticuz/chromium` 153.0.0), exposto por meio de
+`PLAYWRIGHT_BROWSERS_PATH`, apontando para um diretório com o layout esperado pelo Playwright (links
+simbólicos para esse binário). Nenhum arquivo do projeto foi alterado para isso. Os resultados dos testes de
+navegador valem para o Chromium 153, não para o 156 que a CI instalará.
+
+## Observação
+
+`npm ls` marca `@img/sharp-wasm32` e `@napi-rs/wasm-runtime` como `extraneous`. São dependências opcionais
+presentes no lockfile; um lockfile regenerado do zero numa cópia também as mantém. Não afetam build nem testes e
+o lockfile não foi alterado (regenerá-lo mudaria versões não relacionadas).
+
+## Não executado
+
+- Windows: nenhum ambiente Windows disponível. Os comandos de desenvolvimento e teste não foram executados lá.
+- Workflow no GitHub: sem acesso ao repositório; não há execução real do `ci:build` na CI, do deploy nem do
+  `curl` pós-deploy.
+- Safari/iOS, Firefox e leitores de tela.
+- Instalação do Chromium oficial do Playwright (`npx playwright install --with-deps chromium`).
+- Confirmação do patch Node 24.22.1 no nodejs.org.
+- `check-quiz-persistence.mjs` e os testes de privacidade do quiz: dependem do quiz (Fase 3).
