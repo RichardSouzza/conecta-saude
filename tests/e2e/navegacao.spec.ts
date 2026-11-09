@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { contorno } from './helpers';
+import { ALVO, contorno } from './helpers';
 
 test.describe('navegação por teclado e foco visível', () => {
   test('o link "Ir para o conteúdo" é o primeiro da tabulação e tem foco visível dentro da tela', async ({ page }) => {
@@ -39,7 +39,7 @@ test.describe('navegação por teclado e foco visível', () => {
 
   test('marca e itens do menu recebem foco visível na ordem esperada', async ({ page }) => {
     await page.goto('');
-    const esperados = ['Ir para o conteúdo', 'Conecta Saúde', 'Início', 'Sobre'];
+    const esperados = ['Ir para o conteúdo', 'Conecta Saúde', 'Início', 'Sobre', ...(ALVO === 'teste' ? ['Teste seus hábitos'] : [])];
     for (const nome of esperados) {
       await page.keyboard.press('Tab');
       const foco = page.getByRole('link', { name: nome, exact: true }).first();

@@ -33,14 +33,15 @@ Use sempre `npm ci`: ele instala estritamente pelo `package-lock.json` e falha s
 | `npm run test:e2e:teste` | Playwright sobre `dist-test/` |
 | `npm run test:e2e:producao` | Playwright sobre `dist/` |
 | `npm run check:node` | Confere o Node em execução com o `.nvmrc` |
+| `npm run check:quiz` | Proíbe APIs de armazenamento e envio de dados no código do quiz |
 | `npm run check:release` | Portão de release sobre `dist/` |
 | `npm run check:links` | Links internos de `dist/` |
 | `npm run ci:build` | Todas as verificações, na ordem da CI |
 
 ## Validação
 
-`npm run ci:build` executa, em ordem: `check:node`, `check`, `test`, `build:test`, `test:e2e:teste`, `build`,
-`check:release`, `check:links` e `test:e2e:producao`. Qualquer falha interrompe a sequência. O artefato
+`npm run ci:build` executa, em ordem: `check:node`, `check`, `check:quiz`, `test`, `build:test`, `test:e2e:teste`,
+`build`, `check:release`, `check:links` e `test:e2e:producao`. Qualquer falha interrompe a sequência. O artefato
 publicado é o `dist/` que passou por todas as etapas.
 
 ## Publicação
@@ -60,6 +61,7 @@ Primeira publicação:
 ## Documentação
 
 - `docs/conteudo.md`: como adicionar um tema, metadados obrigatórios e aprovação editorial.
+- `docs/quiz.md`: como o quiz funciona, pontuação, como editar perguntas, aprovação e privacidade.
 - `docs/desenvolvimento.md`: caminho-base, portão de release, privacidade e portabilidade.
 - `docs/versoes.md`: versões e SHAs fixados.
 - `docs/revisoes.md`: registro de aprovação do conteúdo de saúde.

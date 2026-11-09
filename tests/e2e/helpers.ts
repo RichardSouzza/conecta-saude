@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Locator, Page } from '@playwright/test';
 
 export const BASE = '/conecta-saude/';
@@ -10,8 +12,25 @@ export const PAGINAS = [
   { nome: 'início', caminho: '', status: 200 },
   { nome: 'sobre', caminho: 'sobre/', status: 200 },
   { nome: '404', caminho: 'nao-existe/', status: 404 },
-  ...(ALVO === 'teste' ? [{ nome: 'tema (rascunho demonstrativo)', caminho: `temas/${TEMA_DEMO}/`, status: 200 }] : []),
+  ...(ALVO === 'teste'
+    ? [
+        { nome: 'tema (rascunho demonstrativo)', caminho: `temas/${TEMA_DEMO}/`, status: 200 },
+        { nome: 'quiz', caminho: 'quiz/', status: 200 },
+      ]
+    : []),
 ];
+
+interface OpcaoDoQuiz { id: string; rotulo: string; pontos: number }
+export interface PerguntaDoQuiz { id: string; categoria: string; texto: string; opcoes: OpcaoDoQuiz[] }
+export interface DadosDoQuiz {
+  status: string;
+  categorias: { id: string; rotulo: string; tema: string }[];
+  perguntas: PerguntaDoQuiz[];
+  faixas: { id: string; rotulo: string; mensagem: string; destacar: boolean }[];
+  resultado: { introducao: string; semDestaque: string; aviso: string };
+}
+
+export const QUIZ: DadosDoQuiz = JSON.parse(readFileSync(join(process.cwd(), 'src', 'data', 'quiz.json'), 'utf8'));
 
 // Recursos com erro HTTP são acompanhados pelo evento `response`; o aviso genérico do console
 // ("Failed to load resource") é ignorado porque a página 404 responde 404 de propósito.

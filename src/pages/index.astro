@@ -2,6 +2,8 @@
 import TemaCard from '../components/TemaCard.astro';
 import Base from '../layouts/Base.astro';
 import { listarTemas } from '../lib/conteudo';
+import { quizDisponivel } from '../lib/quiz/disponibilidade';
+import { url } from '../lib/url';
 
 const areas = [
   { nome: 'Enfermagem', foco: 'prevenção e cuidados básicos com a saúde.' },
@@ -42,6 +44,16 @@ const temas = await listarTemas();
       <ul class="lista-temas">
         {temas.map((tema) => <TemaCard tema={tema} />)}
       </ul>
+    </section>
+  )}
+
+  {quizDisponivel && (
+    <section aria-labelledby="titulo-quiz">
+      <h2 id="titulo-quiz">Teste seus hábitos</h2>
+      <p class="texto">
+        Um teste rápido para refletir sobre o seu dia a dia e conhecer os conteúdos do site. Não é um diagnóstico.
+      </p>
+      <p><a class="botao" href={url('/quiz/')}>Fazer o teste</a></p>
     </section>
   )}
 

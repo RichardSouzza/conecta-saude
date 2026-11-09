@@ -21,6 +21,7 @@ const tituloCompleto = titulo === 'Conecta Saúde' ? titulo : `${titulo} | Conec
     <meta name="theme-color" content="#1c6a4f" />
     <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
     <title>{tituloCompleto}</title>
+    <slot name="head" />
   </head>
   <body>
     <a class="pular" href="#conteudo">Ir para o conteúdo</a>

@@ -1,9 +1,11 @@
 ---
+import { quizDisponivel } from '../lib/quiz/disponibilidade';
 import { url } from '../lib/url';
 
 const itens = [
   { rotulo: 'Início', caminho: '/' },
   { rotulo: 'Sobre', caminho: '/sobre/' },
+  ...(quizDisponivel ? [{ rotulo: 'Teste seus hábitos', caminho: '/quiz/' }] : []),
 ];
 const atual = Astro.url.pathname;
 ---

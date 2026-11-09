@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { quizDisponivel } from '../lib/quiz/disponibilidade';
 ---
 <Base titulo="Sobre" descricao="Sobre o Conecta Saúde: finalidade educativa, privacidade e quem faz o projeto.">
   <h1>Sobre o Conecta Saúde</h1>
@@ -27,6 +28,13 @@ import Base from '../layouts/Base.astro';
       tratamento desses dados segue as práticas e políticas do próprio GitHub.
       <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages">Documentação do GitHub Pages (em inglês)</a>.
     </p>
+    {quizDisponivel && (
+      <p class="texto">
+        As respostas do teste ficam apenas na memória do navegador enquanto a página está aberta: não são enviadas a
+        nenhum servidor nem guardadas no aparelho (armazenamento local, cookies ou mecanismos semelhantes). Ao recarregar
+        ou fechar a página, elas desaparecem.
+      </p>
+    )}
   </section>
 
   <section aria-labelledby="titulo-quem">

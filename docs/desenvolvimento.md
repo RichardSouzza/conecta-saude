@@ -10,7 +10,8 @@ altere `site` e `base` em `astro.config.mjs`. Links internos devem usar `url()` 
 
 `MODO=teste` (definido pelos scripts via `cross-env` e, no Playwright, pela opção `webServer.env`) gera
 `dist-test/`. Sem `MODO`, o build vai para `dist/`. Os testes de navegador rodam sobre os dois, mas só `dist/`
-é publicado. Rascunhos de temas existem apenas no modo teste (ver `docs/conteudo.md`).
+é publicado. Rascunhos de temas e o quiz em demonstração existem apenas no modo teste (ver `docs/conteudo.md` e
+`docs/quiz.md`).
 
 ## Portão de release
 
@@ -36,8 +37,8 @@ O portão confere os metadados da aprovação (status, revisor, data e referênc
 escrita do responsável da área, registrada em `docs/revisoes.md`, é pré-requisito para marcar um conteúdo como
 `aprovado` e publicá-lo.
 
-Contrato com as páginas geradas: ver o cabeçalho do script. Na Fase 3, um teste deve garantir que as categorias
-de `quiz.json` coincidam com `categoriasObrigatorias`, sem duplicar a lista.
+Contrato com as páginas geradas: ver o cabeçalho do script. Um teste (`tests/unit/quiz-schema.test.ts`) garante que as
+categorias de `quiz.json` coincidam com `categoriasObrigatorias`, sem duplicar a lista.
 
 ## Privacidade
 
@@ -62,8 +63,8 @@ Demais regras:
 - Links externos: a documentação do GitHub Pages (citada na página Sobre porque informa que o IP do visitante é
   registrado e armazenado por segurança) e as referências dos temas. São apenas links: nenhum recurso externo é
   carregado, e os testes de navegador conferem isso em cada página.
-- As frases sobre as respostas do quiz (não armazenadas localmente, não enviadas a um backend) só entram na página
-  Sobre quando o quiz existir e seus testes de privacidade passarem (Fase 3).
+- A frase sobre as respostas do quiz (não enviadas a um servidor nem guardadas no aparelho) aparece na página Sobre
+  apenas quando o quiz é publicado. As verificações que a sustentam estão em `docs/quiz.md`.
 
 ## Portabilidade
 

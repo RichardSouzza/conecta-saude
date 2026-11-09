@@ -1,6 +1,6 @@
 # Versões fixadas
 
-Verificado em 26 e 27/10/2026 (consulta ao registro npm, `npm ci` e `npm run ci:build` completos). Todas as dependências são de desenvolvimento, exceto `astro`; nenhuma vai para o site publicado.
+Verificado em 26 e 27/10/2026 (consulta ao registro npm, `npm ci` e `npm run ci:build` completos) e atualizado em 07/11/2026 para a Fase 3. Estão em `dependencies` apenas `astro`, `@astrojs/preact` e `preact`; as demais são de desenvolvimento. Enquanto o quiz não é publicado, nenhum pacote vai para o site (`dist/` sai sem JavaScript).
 
 ## Ambiente
 
@@ -27,14 +27,22 @@ Resolvidas por transitividade: vite 8.3.5 (única versão), zod 4.6.7, @astrojs/
 `npm ls` não mostrou duplicidade de vite, typescript ou @types/node, nem peer obrigatório ausente
 (só dependências opcionais específicas de outras plataformas).
 
-## Planejadas para as próximas fases (ainda não instaladas)
+## Preact (Fase 3)
 
-| Fase | Pacote | Versão |
+Fixados em `dependencies`, junto do `astro`, porque o código do Preact é enviado aos visitantes quando o quiz é
+publicado.
+
+| Pacote | Versão | Requisitos conferidos |
 |---|---|---|
-| 3 | @astrojs/preact | 6.1.1 |
-| 3 | preact | 11.0.1 |
+| @astrojs/preact | 6.1.1 | node >=22.23.4; usa o mesmo `@astrojs/internal-helpers` 0.13.0 do `astro` 7.4.2 e é testado contra ele |
+| preact | 11.0.1 | peer `preact-render-to-string >=6.7.0`, atendido pela dependência do `@astrojs/preact` (6.8.2) |
 
-Antes de instalar, repetir `npm view <pacote> dist-tags` e `npm ls` e registrar aqui as versões resolvidas.
+Consulta de 07/11/2026: já existem `@astrojs/preact` 6.1.2, `preact` 11.2.0 e `astro` 7.4.7. Não foram adotados porque
+não há necessidade concreta e o par fixado coincide com o testado pelos mantenedores.
+
+A instalação trouxe 64 pacotes de build (cadeia do plugin do Preact para o Vite) e alterou um pacote já existente:
+`@babel/parser` 7.29.11 → 7.29.13, exigido pela nova dependência. `npm ls` mostra uma única versão de `vite`,
+`preact` e `@astrojs/internal-helpers`.
 
 ## Navegador dos testes
 

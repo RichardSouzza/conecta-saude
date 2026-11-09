@@ -14,15 +14,18 @@
     "check": "astro check",
     "test": "vitest run",
     "check:node": "node scripts/check-node.mjs",
+    "check:quiz": "node scripts/check-quiz-persistence.mjs",
     "check:release": "node scripts/check-release.mjs",
     "check:links": "node scripts/check-links.mjs",
     "build:test": "cross-env MODO=teste astro build",
     "test:e2e:teste": "cross-env PW_ALVO=teste playwright test",
     "test:e2e:producao": "cross-env PW_ALVO=producao playwright test",
-    "ci:build": "npm run check:node && npm run check && npm test && npm run build:test && npm run test:e2e:teste && npm run build && npm run check:release && npm run check:links && npm run test:e2e:producao"
+    "ci:build": "npm run check:node && npm run check && npm run check:quiz && npm test && npm run build:test && npm run test:e2e:teste && npm run build && npm run check:release && npm run check:links && npm run test:e2e:producao"
   },
   "dependencies": {
-    "astro": "7.4.2"
+    "@astrojs/preact": "6.1.1",
+    "astro": "7.4.2",
+    "preact": "11.0.1"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",

@@ -12,7 +12,7 @@ export const AREAS = [
 
 export const STATUS = ['rascunho', 'aprovado'] as const;
 
-const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DATA_ISO = /^\d{4}-\d{2}-\d{2}$/;
 
 export function dataIsoValida(valor: string): boolean {
@@ -27,19 +27,19 @@ export function formatarData(iso: string): string {
 }
 
 // Datas só são aceitas como texto: o YAML converte datas sem aspas em Date e "2026-02-30" viraria 02/03.
-const dataCampo = (campo: string) =>
+export const dataCampo = (campo: string) =>
   z
     .string({ error: `${campo} deve ser um texto entre aspas no formato "AAAA-MM-DD"` })
     .refine(dataIsoValida, `${campo} deve ser uma data real no formato AAAA-MM-DD`)
     .refine((valor) => !dataIsoValida(valor) || valor <= new Date().toISOString().slice(0, 10), `${campo} não pode estar no futuro`);
 
-const texto = (campo: string, minimo: number) =>
+export const texto = (campo: string, minimo: number) =>
   z
     .string({ error: `${campo} é obrigatório e deve ser um texto` })
     .trim()
     .min(minimo, `${campo} deve ter ao menos ${minimo} caracteres`);
 
-const camposDesconhecidos = (iss: { code: string; keys?: string[] }) =>
+export const camposDesconhecidos = (iss: { code: string; keys?: string[] }) =>
   iss.code === 'unrecognized_keys' ? `campo(s) desconhecido(s): ${(iss.keys ?? []).join(', ')}` : undefined;
 
 const urlHttps = z

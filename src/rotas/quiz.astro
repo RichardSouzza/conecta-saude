@@ -1,0 +1,43 @@
+---
+import AvisoDemonstracao from '../components/AvisoDemonstracao.astro';
+import Quiz from '../components/Quiz';
+import Base from '../layouts/Base.astro';
+import { listarTemas } from '../lib/conteudo';
+import { quiz } from '../lib/quiz/dados';
+import { linkDaListagem, montarLinks } from '../lib/quiz/links';
+import { url } from '../lib/url';
+
+const temas = (await listarTemas()).map((tema) => ({ id: tema.id, titulo: tema.data.title }));
+const links = montarLinks(quiz.categorias, temas, url);
+const listagem = linkDaListagem(temas, url);
+const { categorias, perguntas, faixas, resultado } = quiz;
+---
+<Base titulo="Teste seus hábitos" descricao="Um teste rápido para refletir sobre os seus hábitos. Não é um diagnóstico.">
+  <Fragment slot="head">
+    {import.meta.env.PROD && <meta http-equiv="Content-Security-Policy" content="connect-src 'none'; form-action 'none'" />}
+    <noscript><style>.quiz-carregando { display: none; }</style></noscript>
+  </Fragment>
+  <section
+    class="quiz"
+    data-quiz-status={quiz.status}
+    data-categorias={quiz.categorias.map((c) => `${c.id}:${c.tema}`).join(',')}
+    data-aprovacoes={quiz.aprovacoes.map((a) => a.categoria).join(',')}
+  >
+    <h1>Teste seus hábitos</h1>
+    {quiz.status === 'demonstracao' && <AvisoDemonstracao />}
+    <p class="texto">
+      São {perguntas.length} perguntas rápidas sobre o seu dia a dia. Este teste é uma reflexão educativa: não é uma
+      avaliação clínica, não faz diagnóstico e não substitui a orientação de profissionais de saúde.
+    </p>
+    <p class="texto quiz-privacidade">
+      Suas respostas ficam só neste aparelho, apenas enquanto esta página estiver aberta. Elas não são enviadas a nenhum
+      servidor nem guardadas.
+    </p>
+    <Quiz client:only="preact" quiz={{ categorias, perguntas, faixas, resultado }} links={links} listagem={listagem}>
+      <p slot="fallback" class="texto quiz-carregando">Carregando o teste…</p>
+    </Quiz>
+    <noscript>
+      <p class="texto">O teste precisa de JavaScript ativado no navegador. Ele funciona inteiramente no seu aparelho.</p>
+    </noscript>
+  </section>
+</Base>
