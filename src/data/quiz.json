@@ -1,6 +1,37 @@
 {
-  "status": "demonstracao",
-  "aprovacoes": [],
+  "status": "aprovado",
+  "aprovacoes": [
+    {
+      "categoria": "sono",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    },
+    {
+      "categoria": "alimentacao",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    },
+    {
+      "categoria": "movimento",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    },
+    {
+      "categoria": "saude-bucal",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    },
+    {
+      "categoria": "estresse",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    },
+    {
+      "categoria": "acompanhamento-saude",
+      "aprovadoPor": "Richard Souza",
+      "aprovadoEm": "2026-11-09"
+    }
+  ],
   "categorias": [
     { "id": "sono", "rotulo": "Sono", "tema": "saude-mental" },
     { "id": "alimentacao", "rotulo": "Alimentação", "tema": "alimentacao" },
