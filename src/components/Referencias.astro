@@ -13,7 +13,7 @@ const { referencias } = Astro.props;
     <ol>
       {referencias.map((r) => (
         <li>
-          <a href={r.url} rel="noopener noreferrer">{r.titulo}</a>. {r.instituicao}. Acessado em
+          <a href={r.url} rel="noopener noreferrer">{r.titulo}</a>. {r.instituicao}. Acessado em&nbsp;
           <time datetime={r.acessadoEm}>{formatarData(r.acessadoEm)}</time>.
         </li>
       ))}

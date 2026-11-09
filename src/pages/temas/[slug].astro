@@ -36,7 +36,7 @@ const { Content } = await render(tema);
     <Referencias referencias={data.referencias} />
     {data.status === 'aprovado' && data.revisadoPor && data.revisadoEm && (
       <p class="tema-revisao">
-        Revisado por <strong>{data.revisadoPor}</strong> em
+        Revisado por <strong>{data.revisadoPor}</strong> em&nbsp;
         <time datetime={data.revisadoEm}>{formatarData(data.revisadoEm)}</time>.
       </p>
     )}

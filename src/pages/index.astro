@@ -56,12 +56,4 @@ const temas = await listarTemas();
       <p><a class="botao" href={url('/quiz/')}>Fazer o teste</a></p>
     </section>
   )}
-
-  <section aria-labelledby="titulo-preparo">
-    <h2 id="titulo-preparo">Conteúdos em preparação</h2>
-    <p class="texto">
-      {temas.length > 0 ? 'Os demais textos de cada área' : 'Os textos de cada área'} e o teste de hábitos ainda estão em
-      preparação. Cada conteúdo só será publicado depois de revisado por quem representa a área.
-    </p>
-  </section>
 </Base>

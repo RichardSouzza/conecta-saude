@@ -11,7 +11,7 @@ const { data } = tema;
 ---
 <li class="tema-item" data-conteudo={data.status}>
   <a class="tema-link" href={url(`/temas/${tema.id}/`)}>
-    <span aria-hidden="true">{data.icone}</span>
+    <span class="tema-emoji" aria-hidden="true">{data.icone}</span>
     <span>{data.title}</span>
   </a>
   <p class="tema-meta">

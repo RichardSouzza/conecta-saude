@@ -100,7 +100,7 @@ describe('build com um tema aprovado e um rascunho', () => {
       expect(html).toContain('href="https://example.org/ref-teste"');
       expect(html).toContain('Referência fictícia de teste');
       expect(html).toContain('<time datetime="2026-10-01">01/10/2026</time>');
-      expect(html).toMatch(/Revisado por <strong>Revisora de Teste<\/strong> em\s*<time datetime="2026-10-20">20\/10\/2026<\/time>/);
+      expect(html).toMatch(/Revisado por <strong>Revisora de Teste<\/strong> em(?:\s|&nbsp;)*<time datetime="2026-10-20">20\/10\/2026<\/time>/);
       expect(html).not.toContain('aviso-rascunho');
     });
 

@@ -252,6 +252,11 @@ a:hover {
   font-family: var(--fonte-titulo);
   font-size: 1.2rem;
   font-weight: 700;
+  text-decoration: none;
+}
+
+.tema-link span:not(.tema-emoji) {
+  text-decoration: underline;
 }
 
 .tema-meta {

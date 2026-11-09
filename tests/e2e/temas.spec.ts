@@ -88,7 +88,6 @@ test.describe('build de produção', () => {
     await expect(page.getByText('Em revisão')).toHaveCount(0);
     await expect(page.getByText('Conteúdo em revisão')).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Temas' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Conteúdos em preparação' })).toBeVisible();
   });
 
   test('nenhum HTML publicado contém o conteúdo dos rascunhos', async ({ page }) => {
