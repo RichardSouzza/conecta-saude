@@ -10,6 +10,8 @@ const modoTeste = process.env.MODO === 'teste';
 // Sem quiz publicável, nem a rota nem o Preact entram no build: nenhum HTML ou JavaScript dele chega a dist/.
 const incluirQuiz = quizPublicavel({ modoTeste, estagio: release.estagio, status: quiz.status });
 
+const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
+
 const rotaDoQuiz = {
   name: 'rota-do-quiz',
   hooks: {
@@ -17,10 +19,9 @@ const rotaDoQuiz = {
   },
 };
 
-// Se o repositório ou o domínio mudar, só `site` e `base` precisam ser alterados.
 export default defineConfig({
-  site: 'https://richardsouzza.github.io',
-  base: '/conecta-saude',
+  site: isGitHubPages ? 'https://richardsouzza.github.io' : undefined,
+  base: isGitHubPages ? '/conecta-saude' : '/',
   trailingSlash: 'always',
   outDir: modoTeste ? './dist-test' : './dist',
   integrations: incluirQuiz ? [preact(), rotaDoQuiz] : [],

@@ -84,7 +84,7 @@ describe('build com um tema aprovado e um rascunho', () => {
       expect(html).not.toContain('Rascunho de teste');
       expect(html).not.toContain('Conteúdo em revisão');
       expect(html).not.toContain('Em revisão');
-      expect(htmlDe(producao.dist, '')).toContain('/conecta-saude/temas/aprovado-teste/');
+      expect(htmlDe(producao.dist, '')).toContain('/temas/aprovado-teste/');
     });
 
     it('renderiza título, área, resumo, Markdown, referências e dados da revisão', () => {
@@ -129,7 +129,7 @@ describe('build com um tema aprovado e um rascunho', () => {
       expect(pagina).not.toContain('Revisado por');
 
       const home = htmlDe(teste.dist, '');
-      expect(home).toContain('/conecta-saude/temas/rascunho-teste/');
+      expect(home).toContain('/temas/rascunho-teste/');
       expect(home).toMatch(/Psicologia\s*<span class="tema-estado">Em revisão<\/span>/);
     });
 
