@@ -38,7 +38,7 @@ test.describe('quiz (build de teste)', () => {
   test('renderização inicial: título, avisos, primeira pergunta e progresso', async ({ page }) => {
     await abrir(page);
     await expect(page.getByRole('heading', { level: 1, name: 'Teste seus hábitos' })).toBeVisible();
-    await expect(page.getByRole('note').filter({ hasText: 'DEMONSTRAÇÃO' })).toBeVisible();
+    await expect(page.getByRole('note').filter({ hasText: 'DEMONSTRAÇÃO' })).toHaveCount(0);
     await expect(page.getByText('não é uma avaliação clínica, não faz diagnóstico')).toBeVisible();
     await expect(page.locator('.quiz-privacidade')).toContainText('não são enviadas a nenhum servidor nem guardadas');
 
@@ -206,10 +206,10 @@ test.describe('quiz (build de teste)', () => {
       expect((await page.request.get(href)).status(), `GET ${href}`).toBe(200);
     }
     await expect(page.getByRole('link', { name: 'Ver todos os temas do site' })).toBeVisible();
-    // Nenhum tema aprovado existe ainda: os itens destacados avisam, em vez de gerar link.
+    // No build de teste, os temas aprovados geram links reais; os rascunhos continuam sem publicação.
     const destacados = await page.locator('.quiz-item').filter({ has: page.locator('xpath=self::*[@data-faixa]') }).count();
     expect(destacados).toBeGreaterThan(0);
-    await expect(page.getByText('O conteúdo desta área ainda está em preparação.')).toHaveCount(PRIMEIRA_FAIXA.destacar ? QUIZ.categorias.length : 0);
+    await expect(page.getByText('O conteúdo desta área ainda está em preparação.')).toHaveCount(0);
   });
 
   test('integração no site: link no menu, chamada na página inicial e frase de privacidade em Sobre', async ({ page }) => {
@@ -365,20 +365,21 @@ test.describe('quiz (build de teste)', () => {
 test.describe('quiz (build de produção)', () => {
   test.skip(ALVO !== 'producao', 'a ausência do quiz é verificada sobre o build de produção');
 
-  test('a página do quiz não existe enquanto o estágio for "preparacao"', async ({ page }) => {
+  test('a página do quiz existe quando o estágio é "final" e o quiz está aprovado', async ({ page }) => {
     const resposta = await page.goto('quiz/');
-    expect(resposta?.status()).toBe(404);
-    await expect(page.getByRole('heading', { level: 1, name: 'Página não encontrada' })).toBeVisible();
+    expect(resposta?.status()).toBe(200);
+    await expect(page.getByRole('heading', { level: 1, name: 'Teste seus hábitos' })).toBeVisible();
+    await expect(page.getByRole('note').filter({ hasText: 'DEMONSTRAÇÃO' })).toHaveCount(0);
   });
 
-  test('o site não menciona o quiz e continua sem nenhum JavaScript', async ({ page }) => {
-    for (const caminho of ['', 'sobre/', 'nao-existe/']) {
-      const html = await (await page.request.get(caminho)).text();
-      expect(html, caminho).not.toContain('Teste seus hábitos');
-      expect(html, caminho).not.toContain('respostas do teste');
-      expect(html, caminho).not.toContain('<script');
-    }
-    await page.goto('');
-    await expect(page.getByRole('link', { name: 'Teste seus hábitos' })).toHaveCount(0);
+  test('a página publicada do quiz contém o conteúdo e o JavaScript necessários', async ({
+    page,
+  }) => {
+    const response = await page.request.get('quiz/');
+    const html = await response.text();
+
+    expect(response.ok()).toBeTruthy();
+    expect(html).toContain('Teste seus hábitos');
+    expect(html).toMatch(/component-url="[^"]*Quiz\.[^"]+\.js"/);
   });
 });

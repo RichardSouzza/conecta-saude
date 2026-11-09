@@ -33,12 +33,36 @@
     }
   ],
   "categorias": [
-    { "id": "sono", "rotulo": "Sono", "tema": "saude-mental" },
-    { "id": "alimentacao", "rotulo": "Alimentação", "tema": "alimentacao" },
-    { "id": "movimento", "rotulo": "Movimento", "tema": "movimento" },
-    { "id": "saude-bucal", "rotulo": "Saúde bucal", "tema": "saude-bucal" },
-    { "id": "estresse", "rotulo": "Estresse e bem-estar", "tema": "saude-mental" },
-    { "id": "acompanhamento-saude", "rotulo": "Acompanhamento da saúde", "tema": "prevencao" }
+    {
+      "id": "sono",
+      "rotulo": "Sono",
+      "tema": "estresse-e-saude-mental"
+    },
+    {
+      "id": "alimentacao",
+      "rotulo": "Alimentação",
+      "tema": "alimentacao-adequada"
+    },
+    {
+      "id": "movimento",
+      "rotulo": "Movimento",
+      "tema": "movimento-e-comportamento-sedentario"
+    },
+    {
+      "id": "saude-bucal",
+      "rotulo": "Saúde bucal",
+      "tema": "higiene-bucal"
+    },
+    {
+      "id": "estresse",
+      "rotulo": "Estresse e bem-estar",
+      "tema": "estresse-e-saude-mental"
+    },
+    {
+      "id": "acompanhamento-saude",
+      "rotulo": "Acompanhamento da saúde",
+      "tema": "vacinacao-em-dia"
+    }
   ],
   "perguntas": [
     {
@@ -46,9 +70,21 @@
       "categoria": "sono",
       "texto": "Pensando nos últimos dias, como você descreveria o seu sono?",
       "opcoes": [
-        { "id": "a", "rotulo": "Costumo dormir bem e acordar com disposição", "pontos": 2 },
-        { "id": "b", "rotulo": "Varia: algumas noites são melhores que outras", "pontos": 1 },
-        { "id": "c", "rotulo": "Costumo ter dificuldade para dormir ou para descansar", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Costumo dormir bem e acordar com disposição",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Varia: algumas noites são melhores que outras",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Costumo ter dificuldade para dormir ou para descansar",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -56,9 +92,21 @@
       "categoria": "alimentacao",
       "texto": "Com que frequência frutas, legumes ou verduras aparecem nas suas refeições?",
       "opcoes": [
-        { "id": "a", "rotulo": "Quase todos os dias", "pontos": 2 },
-        { "id": "b", "rotulo": "Algumas vezes por semana", "pontos": 1 },
-        { "id": "c", "rotulo": "Raramente", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Quase todos os dias",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Algumas vezes por semana",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Raramente",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -66,9 +114,21 @@
       "categoria": "alimentacao",
       "texto": "Com que frequência você pula refeições por falta de tempo?",
       "opcoes": [
-        { "id": "a", "rotulo": "Raramente ou nunca", "pontos": 2 },
-        { "id": "b", "rotulo": "Algumas vezes por semana", "pontos": 1 },
-        { "id": "c", "rotulo": "Quase todos os dias", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Raramente ou nunca",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Algumas vezes por semana",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Quase todos os dias",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -76,9 +136,21 @@
       "categoria": "movimento",
       "texto": "Em uma semana comum, em quantos dias você se movimenta de forma ativa (caminhar, dançar, pedalar, praticar esporte)?",
       "opcoes": [
-        { "id": "a", "rotulo": "Em 4 dias ou mais", "pontos": 2 },
-        { "id": "b", "rotulo": "Em 1 a 3 dias", "pontos": 1 },
-        { "id": "c", "rotulo": "Em nenhum dia", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Em 4 dias ou mais",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Em 1 a 3 dias",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Em nenhum dia",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -86,9 +158,21 @@
       "categoria": "movimento",
       "texto": "Ao longo do dia, com que frequência você interrompe longos períodos sentado(a) para andar ou se alongar?",
       "opcoes": [
-        { "id": "a", "rotulo": "Quase sempre", "pontos": 2 },
-        { "id": "b", "rotulo": "Às vezes", "pontos": 1 },
-        { "id": "c", "rotulo": "Quase nunca", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Quase sempre",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Às vezes",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Quase nunca",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -96,9 +180,21 @@
       "categoria": "saude-bucal",
       "texto": "Como é a sua rotina de cuidados com a saúde bucal (escovação, fio dental)?",
       "opcoes": [
-        { "id": "a", "rotulo": "Cuido todos os dias", "pontos": 2 },
-        { "id": "b", "rotulo": "Cuido na maioria dos dias", "pontos": 1 },
-        { "id": "c", "rotulo": "Cuido pouco ou esqueço com frequência", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Cuido todos os dias",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Cuido na maioria dos dias",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Cuido pouco ou esqueço com frequência",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -106,9 +202,21 @@
       "categoria": "estresse",
       "texto": "Com que frequência o estresse do dia a dia atrapalha a sua rotina?",
       "opcoes": [
-        { "id": "a", "rotulo": "Quase nunca", "pontos": 2 },
-        { "id": "b", "rotulo": "Às vezes", "pontos": 1 },
-        { "id": "c", "rotulo": "Com frequência", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Quase nunca",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Às vezes",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Com frequência",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -116,9 +224,21 @@
       "categoria": "estresse",
       "texto": "Você reserva momentos do dia para descansar ou fazer algo de que gosta?",
       "opcoes": [
-        { "id": "a", "rotulo": "Quase sempre", "pontos": 2 },
-        { "id": "b", "rotulo": "Às vezes", "pontos": 1 },
-        { "id": "c", "rotulo": "Quase nunca", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Quase sempre",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Às vezes",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Quase nunca",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -126,9 +246,21 @@
       "categoria": "acompanhamento-saude",
       "texto": "Como você costuma cuidar do acompanhamento da sua saúde (consultas, exames, vacinas)?",
       "opcoes": [
-        { "id": "a", "rotulo": "Procuro acompanhamento com regularidade", "pontos": 2 },
-        { "id": "b", "rotulo": "Procuro de vez em quando", "pontos": 1 },
-        { "id": "c", "rotulo": "Procuro apenas quando algo me preocupa", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Procuro acompanhamento com regularidade",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Procuro de vez em quando",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Procuro apenas quando algo me preocupa",
+          "pontos": 0
+        }
       ]
     },
     {
@@ -136,9 +268,21 @@
       "categoria": "acompanhamento-saude",
       "texto": "Quando tem dúvidas sobre saúde, você sabe onde buscar informação confiável?",
       "opcoes": [
-        { "id": "a", "rotulo": "Sim, tenho fontes em que confio", "pontos": 2 },
-        { "id": "b", "rotulo": "Mais ou menos", "pontos": 1 },
-        { "id": "c", "rotulo": "Ainda não sei onde procurar", "pontos": 0 }
+        {
+          "id": "a",
+          "rotulo": "Sim, tenho fontes em que confio",
+          "pontos": 2
+        },
+        {
+          "id": "b",
+          "rotulo": "Mais ou menos",
+          "pontos": 1
+        },
+        {
+          "id": "c",
+          "rotulo": "Ainda não sei onde procurar",
+          "pontos": 0
+        }
       ]
     }
   ],

@@ -59,7 +59,7 @@ test.describe('build de teste', () => {
 
   test('a página inicial lista os rascunhos com a marca "Em revisão"', async ({ page }) => {
     await page.goto('');
-    const itens = page.locator('.lista-temas > li');
+    const itens = page.locator('.lista-temas > li[data-conteudo="rascunho"]');
     await expect(itens).toHaveCount(2);
     for (const item of await itens.all()) await expect(item).toContainText('Em revisão');
     await expect(itens.first().getByRole('link', { name: /Demonstração: estrutura de um tema/ })).toHaveAttribute(
@@ -80,12 +80,14 @@ test.describe('build de produção', () => {
     });
   }
 
-  test('a página inicial não lista temas nem mostra marcas de rascunho', async ({ page }) => {
+  test('a página inicial lista os temas aprovados e não mostra marcas de rascunho', async ({ page }) => {
     await page.goto('');
-    await expect(page.locator('.lista-temas')).toHaveCount(0);
-    await expect(page.locator('a[href*="/temas/"]')).toHaveCount(0);
+    await expect(page.locator('.lista-temas')).toHaveCount(1);
+    await expect(page.locator('.lista-temas > li[data-conteudo="aprovado"]')).toHaveCount(7);
+    await expect(page.locator('a[href*="/temas/"]')).toHaveCount(7);
     await expect(page.getByText('Em revisão')).toHaveCount(0);
     await expect(page.getByText('Conteúdo em revisão')).toHaveCount(0);
+    await expect(page.getByRole('heading', { name: 'Temas' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Conteúdos em preparação' })).toBeVisible();
   });
 

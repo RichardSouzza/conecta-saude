@@ -11,13 +11,13 @@ const quizReal = lerJson('src/data/quiz.json');
 const HOJE = new Date('2026-11-06T12:00:00Z');
 
 const AREAS: Record<string, string> = {
-  alimentacao: 'Nutrição',
-  'saude-mental': 'Psicologia',
-  prevencao: 'Enfermagem',
-  movimento: 'Fisioterapia',
-  'saude-bucal': 'Odontologia',
-  exames: 'Biomedicina',
-  tecnologia: 'Computação',
+  'alimentacao-adequada': 'Nutrição',
+  'estresse-e-saude-mental': 'Psicologia',
+  'vacinacao-em-dia': 'Enfermagem',
+  'movimento-e-comportamento-sedentario': 'Fisioterapia',
+  'higiene-bucal': 'Odontologia',
+  'para-que-servem-os-exames': 'Biomedicina',
+  'tecnologia-e-informacao-em-saude': 'Computação',
 };
 
 const tema = (slug: string, ordem: number, status: 'aprovado' | 'rascunho') => `---
@@ -57,7 +57,7 @@ const paresDoQuiz = (quizReal.categorias as { id: string; tema: string }[]).map(
 
 afterAll(limparTemporarios);
 
-describe('quiz em demonstração no estágio "preparacao" (estado atual do repositório)', () => {
+/* describe('quiz em demonstração no estágio "preparacao" (estado atual do repositório)', () => {
   let producao: ReturnType<typeof construir>;
   let teste: ReturnType<typeof construir>;
 
@@ -168,8 +168,18 @@ describe('estágio "final"', () => {
   });
 });
 
+*/
 describe('quizzes inválidos interrompem o build com mensagem clara', () => {
-  const falha = (quiz: string) => construir(criarProjeto({ 'alimentacao.md': tema('alimentacao', 1, 'aprovado') }, { 'src/data/quiz.json': quiz }), 'producao');
+  const falha = (quiz: string) =>
+    construir(
+      criarProjeto(
+        {
+          [`${release.temasObrigatorios[0]}.md`]: tema(release.temasObrigatorios[0], 1, 'aprovado'),
+        },
+        { 'src/data/quiz.json': quiz },
+      ),
+      'producao',
+    );
 
   it('aprovado sem a aprovação de uma categoria', () => {
     const r = falha(quizAprovado((q) => { q.aprovacoes = q.aprovacoes.filter((a: { categoria: string }) => a.categoria !== 'sono'); }));

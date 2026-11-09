@@ -1,13 +1,13 @@
 {
   "estagio": "final",
   "temasObrigatorios": [
-    "alimentacao",
-    "saude-mental",
-    "prevencao",
-    "movimento",
-    "saude-bucal",
-    "exames",
-    "tecnologia"
+    "alimentacao-adequada",
+    "estresse-e-saude-mental",
+    "higiene-bucal",
+    "movimento-e-comportamento-sedentario",
+    "para-que-servem-os-exames",
+    "tecnologia-e-informacao-em-saude",
+    "vacinacao-em-dia"
   ],
   "categoriasObrigatorias": [
     "sono",
